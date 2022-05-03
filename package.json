@@ -1,0 +1,21 @@
+{
+  "name": "@yogamifit/components",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "release": "npm run build && npm publish"
+  },
+  "peerDependencies": {
+    "react": "^17",
+    "styled-components": "^5"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.8",
+    "@types/react-dom": "^18.0.3",
+    "@types/styled-components": "^5.1.25",
+    "react": "^17.0.1",
+    "styled-components": "^5.2.3",
+    "typescript": "^4.6.4"
+  }
+}

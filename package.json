@@ -1,5 +1,6 @@
 {
   "name": "@yogamifit/components",
+  "repository": "git://github.com/yogamifit/components.git",
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {

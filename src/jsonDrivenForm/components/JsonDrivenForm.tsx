@@ -1,20 +1,16 @@
 import React, { useState } from "react";
-import { Layout, Survey } from "../types";
-import styled from "styled-components";
 import FormContext from "../FormContext";
+import { Layout } from "../types";
+import { BottomButtons } from "./BottomButtons";
 import CheckboxGroup, { isCheckboxGroupLayout } from "./CheckboxGroup";
+import Contact, { isContactLayout } from "./Contact";
 import Heading, { isHeadingLayout } from "./Heading";
+import ProgressBar from "./ProgressBar";
 import RadioGroup, { isRadioGroupLayout } from "./RadioGroup";
 import TextInput, { isTextInputLayout } from "./TextInput";
-import Contact, { isContactLayout } from "./Contact";
-import { Spin } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
-import ProgressBar from "./ProgressBar";
 
-function useForm() {
-  const [data, setData] = useState<{
-    [key: string]: unknown;
-  }>({});
+function useForm(initialFormData?: FormData) {
+  const [data, setData] = useState<FormData>(initialFormData ?? {});
 
   function update(key: string, value: unknown) {
     console.log(key, value);
@@ -27,120 +23,77 @@ function useForm() {
   return { data, update };
 }
 
-export default function JsonDrivenSurvey(props: {
-  survey: Survey;
-  onNext: () => void;
-  onBack: () => void;
-  onFinish: () => void;
-  onSubmit: (form: { data: { [key: string]: unknown } }) => Promise<void>;
-  currentStep: number;
-  totalSteps: number;
-}) {
-  const renderLayout = (layout: Layout, index: number) => {
-    if (isHeadingLayout(layout)) return <Heading key={index} layout={layout} />;
+export default function JsonDrivenForm(props: JsonDrivenFormProps) {
+  const renderLayout = (layout: Layout) => {
+    if (isHeadingLayout(layout)) return <Heading layout={layout} />;
 
-    if (isTextInputLayout(layout)) return <TextInput key={index} layout={layout} />;
+    if (isContactLayout(layout)) return <Contact />;
 
-    if (isCheckboxGroupLayout(layout)) return <CheckboxGroup key={index} layout={layout} />;
+    if (isTextInputLayout(layout)) return <TextInput layout={layout} />;
 
-    if (isRadioGroupLayout(layout)) return <RadioGroup key={index} layout={layout} />;
+    if (isCheckboxGroupLayout(layout)) return <CheckboxGroup layout={layout} />;
 
-    if (isContactLayout(layout)) return <Contact key={index} />;
+    if (isRadioGroupLayout(layout)) return <RadioGroup layout={layout} />;
 
     return null;
   };
 
-  const isFirstSurvey = props.currentStep === 0;
-
-  const isLastSurvey = props.currentStep === props.totalSteps;
-
-  const handleBackClick = () => {
-    if (isFirstSurvey) return;
-    props.onBack();
-  };
-
-  const handleNextClick = async () => {
-    await submit();
-    if (isLastSurvey) props.onFinish();
-    else props.onNext();
-  };
-
-  const { data, update } = useForm();
+  const { data, update } = useForm(props.initialFormData);
 
   const [loading, setLoading] = useState(false);
 
-  async function submit() {
+  const handleBackClick = async () => {
+    await props.onPrevious();
+  };
+
+  const handleNextClick = async () => {
     setLoading(true);
 
-    await props.onSubmit({ data });
+    await props.onNext({ data });
 
     setLoading(false);
-  }
+  };
+
+  const lastStep = props.layoutJson.length - 1;
+  const isFirstStep = props.step === 0;
+  const isLastStep = props.step === lastStep;
 
   return (
     <>
-      <ProgressBar currentStep={props.currentStep} totalSteps={props.totalSteps} />
+      <ProgressBar currentStep={props.step} lastStep={lastStep} />
 
-      <FormContext.Provider value={{ data, update }}>{props.survey.layout.map(renderLayout)}</FormContext.Provider>
+      <FormContext.Provider value={{ data, update }}>
+        {props.layoutJson[props.step].layout.map((layout, index) => (
+          <React.Fragment key={index}>{renderLayout(layout)}</React.Fragment>
+        ))}
+      </FormContext.Provider>
 
-      <BottomButtonsWrapper>
-        <NextButton onClick={handleNextClick} disabled={loading}>
-          {isLastSurvey ? "Finish" : "Next"}{" "}
-          <Spin
-            size="default"
-            spinning={loading}
-            indicator={<LoadingOutlined style={{ fontSize: 24, color: "white", marginLeft: 20 }} spin />}
-          />
-        </NextButton>
-        {!isFirstSurvey && (
-          <Button onClick={handleBackClick} style={{ marginLeft: -17 }}>
-            <ChevronLeft />
-            Previous
-          </Button>
-        )}
-      </BottomButtonsWrapper>
+      <BottomButtons
+        isFirstStep={isFirstStep}
+        isLastStep={isLastStep}
+        onBack={handleBackClick}
+        onNext={handleNextClick}
+        submitLoading={loading}
+      />
     </>
   );
 }
 
-const ChevronLeft = () => (
-  <svg
-    width="25"
-    height="25"
-    style={{ marginRight: 5 }}
-    viewBox="0 0 20 20"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path d="M12.841 6.175L11.666 5L6.66602 10L11.666 15L12.841 13.825L9.02435 10L12.841 6.175Z" fill="black" />
-  </svg>
-);
+interface FormData {
+  [key: string]: unknown;
+}
 
-const BottomButtonsWrapper = styled.div`
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 50px;
-`;
+interface JsonDrivenFormProps {
+  layoutJson: {
+    formId: string;
+    layout: Layout[];
+  }[];
 
-const Button = styled.button`
-  padding: 10px;
-  border: none;
-  background-color: white;
-  border-radius: 7px;
-  font-weight: 500;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+  initialFormData?: FormData;
 
-const NextButton = styled(Button)`
-  padding: 10px 20px;
-  background-color: #f68e2e;
-  border-bottom: 3px solid #c07128;
-  color: white;
-  min-width: 150px;
-`;
+  step: number;
+
+  onNext: (formData: { data: FormData }) => void | Promise<void>;
+
+  onPrevious: () => void | Promise<void>;
+}

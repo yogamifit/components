@@ -4,10 +4,10 @@ export default function ProgressBar(props: ProgressBarProps) {
   return (
     <ProgressBarWrapper>
       <ProgressText>
-        {props.currentStep + 1} / {props.totalSteps + 1}
+        {props.currentStep + 1} / {props.lastStep + 1}
       </ProgressText>
       <ProgressBarTotal>
-        <ProgressCompleted style={{ width: `${((props.currentStep + 1) / (props.totalSteps + 1)) * 100}%` }} />
+        <ProgressCompleted style={{ width: `${(props.currentStep / props.lastStep) * 100}%` }} />
       </ProgressBarTotal>
     </ProgressBarWrapper>
   );
@@ -42,5 +42,5 @@ const ProgressCompleted = styled.div`
 
 interface ProgressBarProps {
   currentStep: number;
-  totalSteps: number;
+  lastStep: number;
 }

@@ -6,27 +6,27 @@ import { ContactLayout, Layout } from "../types";
 export default function Contact() {
   const { data, update } = useContext(FormContext);
 
-  const selectedContactMethod = data.contactMethod as { dataId: string };
-  const currentContactDetail = data.contactDetail as { value?: string };
+  const selectedContactMethod = data.contactMethod as string;
+  const currentContactDetail = data.phone as string;
 
   function handleContactMethodSelect(contactMethod: string) {
-    update("contactMethod", { dataId: contactMethod });
+    update("contactMethod", contactMethod);
   }
 
   function handleContactDetailChange(contactDetail: string) {
-    update("contactDetail", { value: contactDetail });
+    update("phone", contactDetail);
   }
 
   useEffect(() => {
     if (!selectedContactMethod) {
-      update("contactMethod", { dataId: "whatsapp" });
+      update("contactMethod", "whatsapp");
     }
   }, [selectedContactMethod, update]);
 
   useEffect(() => {
     const phone = localStorage.getItem("phone");
     if (phone) {
-      update("contactDetail", { value: phone });
+      update("phone", phone);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -37,7 +37,7 @@ export default function Contact() {
         <Select
           name="contact_method"
           onChange={(e) => handleContactMethodSelect(e.target.value)}
-          value={selectedContactMethod?.dataId}
+          value={selectedContactMethod}
         >
           <option value="whatsapp">WhatsApp</option>
           <option value="sms">SMS</option>
@@ -48,7 +48,7 @@ export default function Contact() {
       <TextInput
         name="contact-detail"
         type="tel"
-        value={currentContactDetail?.value || ""}
+        value={currentContactDetail || ""}
         onChange={(e) => handleContactDetailChange(e.target.value)}
         placeholder={
           {
@@ -56,7 +56,7 @@ export default function Contact() {
             whatsapp: "Example, +919876543210",
             imessage: "Example, +919876543210",
             phone: "Example, +919876543210",
-          }[selectedContactMethod?.dataId]
+          }[selectedContactMethod]
         }
       />
     </Wrapper>

@@ -3,17 +3,13 @@ import { CheckboxGroupLayout, Layout } from "../types";
 import styled from "styled-components";
 import FormContext from "../FormContext";
 
-type FormData = { dataId: string; custom?: string }[];
+type FormData = string[];
 
 export default function CheckboxGroup(props: { layout: CheckboxGroupLayout }) {
   const meta = props.layout.meta;
 
   const { data, update } = useContext(FormContext);
-  const value = data[meta.dataId] as FormData | undefined;
-
-  const selected = useMemo(() => {
-    return value?.map(({ dataId }) => dataId);
-  }, [value]);
+  const selected = data[meta.dataId] as FormData | undefined;
 
   function isChecked(dataId: string) {
     return selected?.includes(dataId);
@@ -26,10 +22,7 @@ export default function CheckboxGroup(props: { layout: CheckboxGroupLayout }) {
     if (isChecked(dataId)) newSelected = prev.filter((id) => id !== dataId);
     else newSelected = prev.concat([dataId]);
 
-    update(
-      meta.dataId,
-      newSelected.map((dataId) => ({ dataId }))
-    );
+    update(meta.dataId, newSelected);
   }
 
   return (

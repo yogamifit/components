@@ -3,7 +3,7 @@ import styled from "styled-components";
 import FormContext from "../FormContext";
 import { TextInputLayout, Layout } from "../types";
 
-type FormData = { value: string };
+type FormData = string;
 
 export default function TextInput(props: { layout: TextInputLayout }) {
   const { layout, ...rest } = props;
@@ -13,7 +13,7 @@ export default function TextInput(props: { layout: TextInputLayout }) {
   const currentValue = data[meta.dataId] as FormData;
 
   function handleChange(newValue: string) {
-    update(meta.dataId, { value: newValue });
+    update(meta.dataId, newValue);
   }
 
   return (
@@ -26,7 +26,7 @@ export default function TextInput(props: { layout: TextInputLayout }) {
           rows={meta.rows}
           {...rest}
           fullWidth
-          value={(currentValue?.value as string) || ""}
+          value={currentValue ?? ""}
           onChange={(e: any) => handleChange(e.target.value)}
         />
       ) : (
@@ -35,7 +35,7 @@ export default function TextInput(props: { layout: TextInputLayout }) {
           fullWidth={meta.fullWidth}
           type={layout.meta.numeric ? "number" : undefined}
           {...rest}
-          value={(currentValue?.value as string) || ""}
+          value={currentValue ?? ""}
           onChange={(e) => handleChange(e.target.value)}
         />
       )}

@@ -3,7 +3,7 @@ import { RadioGroupLayout, Layout } from "../types";
 import styled from "styled-components";
 import FormContext from "../FormContext";
 
-type FormData = { dataId: string; custom?: string };
+type FormData = string;
 
 export default function RadioGroup(props: { layout: RadioGroupLayout }) {
   const meta = props.layout.meta;
@@ -12,16 +12,16 @@ export default function RadioGroup(props: { layout: RadioGroupLayout }) {
   const value = data[meta.dataId] as FormData | undefined;
 
   function isChecked(dataId: string) {
-    return value?.dataId === dataId;
+    return value === dataId;
   }
 
   function toggle(dataId: string) {
     if (isChecked(dataId)) return;
-    else update(meta.dataId, { dataId });
+    else update(meta.dataId, dataId);
   }
 
   function handleCustomInputChange(dataId: string, newValue: string) {
-    update(meta.dataId, { dataId, custom: newValue });
+    update(meta.dataId, dataId);
   }
 
   return (

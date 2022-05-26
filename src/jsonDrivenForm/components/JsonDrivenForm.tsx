@@ -13,7 +13,6 @@ function useForm(initialFormData?: FormData) {
   const [data, setData] = useState<FormData>(initialFormData ?? {});
 
   function update(key: string, value: unknown) {
-    console.log(key, value);
     setData((prev) => ({
       ...prev,
       [key]: value,
@@ -85,7 +84,6 @@ interface FormData {
 
 interface JsonDrivenFormProps {
   layoutJson: {
-    formId: string;
     layout: Layout[];
   }[];
 

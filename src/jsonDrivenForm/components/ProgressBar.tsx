@@ -17,6 +17,7 @@ const ProgressBarWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  margin-bottom: 50px;
 `;
 
 const ProgressText = styled.span`
@@ -28,7 +29,7 @@ const ProgressBarTotal = styled.div`
   height: 5px;
   width: 100%;
   background-color: #e5e5e5;
-  margin: 0 0 50px;
+  /* margin: 0 0 50px; */
 
   @media screen and (max-width: 500px) {
     margin-bottom: 30px;

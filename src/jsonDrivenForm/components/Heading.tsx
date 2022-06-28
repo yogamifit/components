@@ -7,6 +7,7 @@ export default function Heading(props: { layout: HeadingLayout }) {
 }
 
 const H1 = styled.h1`
+  margin-top: 50px;
   @media screen and (max-width: 500px) {
     font-size: 24px;
   }

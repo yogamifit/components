@@ -8,7 +8,7 @@ type FormData = string[];
 export default function CheckboxGroup(props: { layout: CheckboxGroupLayout }) {
   const meta = props.layout.meta;
 
-  const { data, update } = useContext(FormContext);
+  const { data, update, showValidationErrors } = useContext(FormContext);
   const selected = data[meta.dataId] as FormData | undefined;
 
   function isChecked(dataId: string) {
@@ -25,9 +25,12 @@ export default function CheckboxGroup(props: { layout: CheckboxGroupLayout }) {
     update(meta.dataId, newSelected);
   }
 
+  const validationError = meta.required && showValidationErrors && !selected?.length;
+
   return (
     <>
-      {meta.label && <GroupLabel>{meta.label}</GroupLabel>}
+      {meta.label && <GroupLabel error={validationError}>{meta.label}</GroupLabel>}
+      {validationError && <ErrorText>This field is required.</ErrorText>}
       {meta.options.map((option) => (
         <Fragment key={option.dataId}>
           <SemanticCheckbox
@@ -49,11 +52,12 @@ export default function CheckboxGroup(props: { layout: CheckboxGroupLayout }) {
   );
 }
 
-const GroupLabel = styled.label`
+const GroupLabel = styled.label<{ error?: boolean }>`
   display: block;
   font-size: 16px;
-  margin: 30px 0 5px;
+  margin: 40px 0 5px;
   font-weight: 500;
+  ${({ error }) => (error ? "color: red;" : "")}
 `;
 
 const SemanticCheckbox = styled.input`
@@ -70,6 +74,12 @@ const Label = styled.label`
   padding: 10px 0;
 `;
 
+const ErrorText = styled.p`
+  margin-top: 8px;
+  margin-bottom: 0;
+  color: red;
+`;
+
 function CheckboxIcon(props: ComponentProps<"input">) {
   return <CheckboxWrapper>{props.checked ? <CheckboxChecked /> : <CheckboxUnchecked />}</CheckboxWrapper>;
 }
@@ -82,6 +92,7 @@ const CheckboxWrapper = styled.div`
 const LabelText = styled.span`
   display: block;
   font-size: 16px;
+  font-weight: normal;
 `;
 
 const DescriptionText = styled.span`

@@ -5,6 +5,7 @@ const FormContext = React.createContext<{
     [key: string]: unknown;
   };
   update: (key: string, value: unknown) => void;
+  showValidationErrors?: boolean;
 }>({
   data: {},
   update: () => {},

@@ -7,7 +7,7 @@ type FormData = string;
 
 export default function RadioGroup(props: { layout: RadioGroupLayout }) {
   const meta = props.layout.meta;
-  const { data, update } = useContext(FormContext);
+  const { data, update, showValidationErrors } = useContext(FormContext);
 
   const value = data[meta.dataId] as FormData | undefined;
 
@@ -24,9 +24,12 @@ export default function RadioGroup(props: { layout: RadioGroupLayout }) {
     update(meta.dataId, dataId);
   }
 
+  const validationError = meta.required && showValidationErrors && !value;
+
   return (
     <>
-      {meta.label && <GroupLabel>{meta.label}</GroupLabel>}
+      {meta.label && <GroupLabel error={validationError}>{meta.label}</GroupLabel>}
+      {validationError && <ErrorText>This field is required.</ErrorText>}
       {meta.options.map((option) => (
         <Fragment key={option.dataId}>
           <SemanticRadio type="radio" id={option.dataId} name={meta.dataId} onChange={() => toggle(option.dataId)} />
@@ -50,11 +53,12 @@ export default function RadioGroup(props: { layout: RadioGroupLayout }) {
   );
 }
 
-const GroupLabel = styled.label`
+const GroupLabel = styled.label<{ error?: boolean }>`
   display: block;
   font-size: 16px;
-  margin: 30px 0 5px;
+  margin: 40px 0 5px;
   font-weight: 500;
+  ${({ error }) => (error ? "color: red;" : "")}
 `;
 
 const SemanticRadio = styled.input`
@@ -71,6 +75,11 @@ const Label = styled.label`
   padding: 10px 0;
 `;
 
+const ErrorText = styled.p`
+  margin-top: 8px;
+  color: red;
+`;
+
 function RadioIcon(props: ComponentProps<"input">) {
   return <RadioWrapper>{props.checked ? <RadioChecked /> : <RadioUnchecked />}</RadioWrapper>;
 }
@@ -83,6 +92,7 @@ const RadioWrapper = styled.div`
 const LabelText = styled.span`
   display: block;
   font-size: 16px;
+  font-weight: normal;
 `;
 
 const DescriptionText = styled.span`

@@ -89,6 +89,7 @@ export interface FileDropZoneLayout {
     supportedFormats: Record<string, string[]> | undefined;
     allowMultiple: boolean | undefined;
     maxFiles?: number | undefined;
+    maxSize?: number | undefined;
     required?: boolean;
   };
 }

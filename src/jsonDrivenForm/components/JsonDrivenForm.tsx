@@ -69,7 +69,14 @@ export default function JsonDrivenForm(props: JsonDrivenFormProps) {
     const CustomLayoutComponent = props.customLayoutComponents?.[layout.type];
 
     if (CustomLayoutComponent)
-      return <CustomLayoutComponent layout={layout} onChange={update} showValidationError={showValidationErrors} />;
+      return (
+        <CustomLayoutComponent
+          value={data[layout.meta?.dataId]}
+          layout={layout}
+          onChange={update}
+          showValidationError={showValidationErrors}
+        />
+      );
 
     return null;
   };
@@ -129,6 +136,7 @@ interface JsonDrivenFormProps {
         meta?: any;
         [key: string]: any;
       };
+      value?: any;
       onChange: (key: string, value: unknown) => void;
       showValidationError?: boolean;
     }>;

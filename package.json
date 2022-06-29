@@ -2,7 +2,7 @@
   "name": "@yogamifit/components",
   "type": "module",
   "repository": "git://github.com/yogamifit/components.git",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

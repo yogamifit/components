@@ -19,6 +19,7 @@ const FileDropZone = (props: FileDropZoneProps) => {
   const { acceptedFiles, getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } = useDropzone({
     accept: acceptedMimeTypes,
     maxFiles: meta.maxFiles,
+    maxSize: meta.maxSize,
     multiple: !!meta.allowMultiple,
   });
 
@@ -55,8 +56,9 @@ const FileDropZone = (props: FileDropZoneProps) => {
           </svg>
 
           <p>
-            Drag and drop {props.layout.meta.allowMultiple ? "files" : "a file"}, or <BrowseLabel>Browse</BrowseLabel>
+            Drag and drop {meta.allowMultiple ? "files" : "a file"}, or <BrowseLabel>Browse</BrowseLabel>
           </p>
+          {typeof meta.maxSize === "number" ? <p>{`Max size: ${(meta.maxSize / 1_048_576).toFixed(0)} MB`}</p> : null}
 
           {props.layout.meta.supportedFormats && (
             <SupportedFormats>
